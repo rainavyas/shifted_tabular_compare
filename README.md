@@ -7,9 +7,13 @@ python3.4 or above
 
 ## Necessary Packages (Installation via PyPI)
 
+### FT-Transformer
+
 `pip install rtdl`
 
 `pip install libzero==0.0.4` (Zero-overhead library for Pytorch) 
+
+### XGBoost
 
 `pip install xgboost`
 
