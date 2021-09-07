@@ -11,4 +11,8 @@ python3.4 or above
 
 `pip install libzero==0.0.4` (Zero-overhead library for Pytorch) 
 
+`pip install xgboost`
+
+`pip install scikit-learn`
+
 
