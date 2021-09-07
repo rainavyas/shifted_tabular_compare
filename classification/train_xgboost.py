@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import argparse
+import os
+import sys
 from xgboost import XGBClassifier
 
 def get_lab_to_ind(data_df):
@@ -23,6 +25,12 @@ def main():
 
     args = parser.parse_args()
     SEED=args.seed
+
+    # Save the command run
+    if not os.path.isdir('CMDs'):
+        os.mkdir('CMDs')
+    with open('CMDs/train_xgboost.cmd', 'a') as f:
+        f.write(' '.join(sys.argv)+'\n')
 
     df_train = pd.read_csv(args.train_path)
     df_dev_in = pd.read_csv(args.dev_in_path)
