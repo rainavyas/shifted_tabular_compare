@@ -55,7 +55,7 @@ def main():
         'colsample_bynode':1,
         'colsample_bytree':1,
         'gamma':0,
-        'learning_rate':0.5,
+        'learning_rate':1.0,
         'max_delta_step':0,
         'max_depth':6,
         'min_child_weight':1,
