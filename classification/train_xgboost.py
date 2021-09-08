@@ -55,7 +55,7 @@ def main():
         'colsample_bynode':1,
         'colsample_bytree':1,
         'gamma':0,
-        'learning_rate':0.1,
+        'learning_rate':0.5,
         'max_delta_step':0,
         'max_depth':6,
         'min_child_weight':1,
@@ -67,13 +67,14 @@ def main():
         'scale_pos_weight':1,
         'seed':SEED,
         'subsample':1,
-        'verbosity':1
+        'verbosity':1,
+        'n_estimators':50 # number of epochs
     }
 
     model = XGBClassifier(**params)
 
     # Train
-    model.fit(X_train, y_train, eval_metric=['mlogloss', 'merror'], eval_set=[(X_train, y_train), (X_dev_in, y_dev_in)], early_stopping_rounds=25, verbose=1)
+    model.fit(X_train, y_train, eval_metric=['mlogloss', 'merror'], eval_set=[(X_train, y_train), (X_dev_in, y_dev_in)], early_stopping_rounds=10, verbose=1)
 
     # Save
     model.dump_model(f'{args.save_dir_path}/seed{SEED}.txt')
