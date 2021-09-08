@@ -7,6 +7,39 @@ import numpy as np
 import argparse
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader
+from scipy import stats
+from typing import Dict
+import numpy as np
+import sklearn.preprocessing
+
+
+def normalize(
+    X: Dict[str, np.ndarray], normalization: str, seed: int, noise: float = 1e-3
+) -> Dict[str, np.ndarray]:
+    # X ~ {'train': <train_size x n_features>, 'val': <val_size x n_features>, 'test': <test_size x n_features>}
+    X_train = X['train']
+    if normalization == 'standard':
+        normalizer = sklearn.preprocessing.StandardScaler()
+    elif normalization == 'quantile':
+        normalizer = sklearn.preprocessing.QuantileTransformer(
+            output_distribution='normal',
+            n_quantiles=max(min(X['train'].shape[0] // 30, 1000), 10),
+            subsample=1e9,
+            random_state=seed,
+        )
+        if noise:
+            X_train = X_train.copy()
+            stds = np.std(X_train, axis=0, keepdims=True)
+            noise_std = noise / np.maximum(stds, noise)
+            X_train += noise_std * np.random.default_rng(seed).standard_normal(
+                X_train.shape
+            )
+    else:
+        raise ValueError(f'unknown normalization: {normalization}')
+    normalizer.fit(X_train)
+    return {k: normalizer.transform(v) for k, v in X.items()}
+
+
 
 def apply_model(model, x_num, x_cat=None):
     '''
@@ -143,20 +176,52 @@ def main():
     args = parser.parse_args()
 
     df_train = pd.read_csv(args.train_path)
-    # Remove rows with NaN in training data
-    df_train = df_train.dropna()
-
     df_dev_in = pd.read_csv(args.dev_in_path)
-    # Replace NaN with 0 for dev_in data
-    df_dev_in = df_dev_in.fillna(0)
 
     torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    np.random.seed(args.seed)
+    seed = args.seed
 
     lab_to_ind = get_lab_to_ind(df_train)
     batch_size = args.batch_size
 
+
+    cat_features = []
+    for col in df_dev_in:
+        values = df_dev_in[col].tolist()
+        unique = list(dict.fromkeys(values))
+        if len(unique) < 20:
+            cat_features.append(col)
+
+
+    nan_replacements = {}
+    for col in df_train:
+        if col in cat_features:
+            nan_replacements[col] = stats.mode(np.asarray(df_train[col].tolist()))[0][0]
+            # print(nan_replacements[col])
+        else:
+            nan_replacements[col] = np.mean(np.asarray(df_train[col].dropna().tolist()))
+
+    # Replace nans in train and dev
+    for col in df_train:
+        df_train[col] = df_train[col].fillna(nan_replacements[col])
+        df_dev_in[col] = df_dev_in[col].fillna(nan_replacements[col])
+
+    # Normalise using train data stats
+    # Quantile normalisation is used (maps to a normal distribution)
+    X_train_np = np.asarray(df_train.iloc[:,6:])
+    X_dev_in_np = np.asarray(df_dev_in.iloc[:,6:])
+    X = {'train': X_train_np, 'dev_in': X_dev_in_np}
+    X = normalize(X, normalization='quantile', seed=seed)
+    X_train_np = X['train']
+    X_dev_in_np = X['dev_in']
+
+    X_train = torch.FloatTensor(X_train_np)
+    X_dev_in = torch.FloatTensor(X_dev_in_np)
+
+
     # Train
-    X_train = torch.FloatTensor(np.asarray(df_train.iloc[:,6:]))
     y_train = np.asarray(df_train['fact_cwsm_class'])
     y_train = torch.LongTensor(np.asarray([lab_to_ind[lab] for lab in y_train]))
 
@@ -164,7 +229,6 @@ def main():
     train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
 
     # Dev in
-    X_dev_in = torch.FloatTensor(np.asarray(df_dev_in.iloc[:,6:]))
     y_dev_in = df_dev_in['fact_cwsm_class']
     y_dev_in = torch.LongTensor(np.asarray([lab_to_ind[lab] for lab in y_dev_in]))
 
