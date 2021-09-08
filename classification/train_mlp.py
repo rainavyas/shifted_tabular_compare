@@ -42,7 +42,7 @@ def accuracy_topk(output, target, k=1):
       res_total += acc
     return res_total*100
 
-def train(train_loader, model, criterion, optimizer, epoch, device, print_freq=100):
+def train(train_loader, model, criterion, optimizer, epoch, device, print_freq=500):
     '''
     Run one train epoch
     '''
@@ -228,10 +228,13 @@ def main():
     for col in df_train:
         if col in cat_features:
             nan_replacements[col] = stats.mode(np.asarray(df_train[col].tolist()))[0][0]
-            # print(nan_replacements[col])
         else:
             nan_replacements[col] = np.mean(np.asarray(df_train[col].dropna().tolist()))
 
+    # Replace nans in train and dev
+    for col in df_train:
+        df_train[col] = df_train[col].fillna(nan_replacements[col])
+        df_dev_in[col] = df_dev_in[col].fillna(nan_replacements[col])
 
     # Normalise using train data stats
     # Quantile normalisation is used (maps to a normal distribution)
