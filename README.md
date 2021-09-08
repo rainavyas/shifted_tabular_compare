@@ -3,9 +3,13 @@ Comparing Gradient Boosted Tree Models to Neural Models for domain shifted tabul
 
 # Requirements
 
-python3.4 or above
+python3.7 or above
 
 ## Necessary Packages (Installation via PyPI)
+
+`pip install pandas`
+
+`pip install numpy`
 
 ### FT-Transformer
 
@@ -18,5 +22,9 @@ python3.4 or above
 `pip install xgboost`
 
 `pip install scikit-learn`
+
+### MLP
+
+`pip install torch`
 
 
