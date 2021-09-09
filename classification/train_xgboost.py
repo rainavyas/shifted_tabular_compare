@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 from xgboost import XGBClassifier
+import pickle
 
 def get_lab_to_ind(data_df):
     '''
@@ -68,7 +69,7 @@ def main():
         'seed':SEED,
         'subsample':1,
         'verbosity':1,
-        'n_estimators':50 # number of epochs
+        'n_estimators':75 # number of epochs
     }
 
     model = XGBClassifier(**params)
@@ -77,7 +78,7 @@ def main():
     model.fit(X_train, y_train, eval_metric=['mlogloss', 'merror'], eval_set=[(X_train, y_train), (X_dev_in, y_dev_in)], early_stopping_rounds=10, verbose=1)
 
     # Save
-    model.dump_model(f'{args.save_dir_path}/seed{SEED}.txt')
+    pickle.dump(model, open(f'{args.save_dir_path}/seed{SEED}.dat', "wb"))
 
 if __name__ == '__main__':
     main()
