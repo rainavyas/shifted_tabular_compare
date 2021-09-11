@@ -33,20 +33,20 @@ def classification_calibration(labels, probs, save_path, bins=10):
     ECE /= np.float(total)
     MCE = np.max(np.abs(gaps))
     accs[-1] = 1.0
-    fig, ax = plt.subplots(dpi=300)
-    plt.plot(confs, accs)
-    plt.plot(confs, confs)
-    plt.ylim(0.0, 1.0)
-    plt.ylabel('Accuracy')
-    plt.xlabel('Confidence')
-    plt.xlim(1.0/n_classes, 1.0)
-    plt.legend(['Model','Ideal'])
-    plt.savefig(os.path.join(save_path), bbox_inches='tight')
-    plt.close()
+    # fig, ax = plt.subplots(dpi=300)
+    # plt.plot(confs, accs)
+    # plt.plot(confs, confs)
+    # plt.ylim(0.0, 1.0)
+    # plt.ylabel('Accuracy')
+    # plt.xlabel('Confidence')
+    # plt.xlim(1.0/n_classes, 1.0)
+    # plt.legend(['Model','Ideal'])
+    # plt.savefig(os.path.join(save_path), bbox_inches='tight')
+    # plt.close()
     return np.round(ECE * 100.0, 2), np.round(MCE * 100.0, 2)
 
 
-def eval_calibration(labels, probs, save_path, bins=10):
+def eval_calibration(labels, probs, save_path=None, bins=10):
     likelihoods = probs[labels]
     nll = np.mean(-np.log(likelihoods))
     brier = np.mean((1.0-likelihoods)**2)
