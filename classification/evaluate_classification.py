@@ -83,17 +83,36 @@ if __name__ == '__main__':
     print('Accuracy:', acc)
     print('Macro F1:', f1)
     print('---------------')
+    nll, _, ece, mce = eval_calibration(labels, ens_preds)
+    print('nll:', nll)
+    print('ece:', ece)
+    print('mce:', mce)
+    print('---------------')
+    print('---------------')
 
     # Single seed results
     accs = []
     f1s = []
+    nlls, eces, mces = [], [], []
     for preds in all_preds:
         accs.append(metric_accuracy(preds, labels))
         f1s.append(get_avg_f1(preds, labels))
+        nll, _, ece, mce = eval_calibration(labels, preds)
+        nlls.append(nll)
+        eces.append(ece)
+        mces.append(mce)
     accs = np.asarray(accs)
     f1s = np.asarray(f1s)
+    nlls = np.asarray(nlls)
+    eces = np.asarray(eces)
+    mces = np.asarray(mces)
     print('---------------')
     print('Single')
     print(f'Accuracy: {accs.mean()} +- {accs.std()}')
     print(f'Macro F1: {f1s.mean()} +- {f1s.std()}')
+    print('---------------')
+    print('nll:', nlls.mean())
+    print('ece:', eces.mean())
+    print('mce:', mces.mean())
+    print('---------------')
     print('---------------')
