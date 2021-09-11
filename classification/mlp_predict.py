@@ -122,7 +122,7 @@ if __name__ == '__main__':
         X_dev = torch.FloatTensor(X_dev_np)
 
         lab_to_ind = get_lab_to_ind(df_train)
-        batch_size = 256
+        batch_size = 512
 
         # get targets for dev
         y_dev = df['fact_cwsm_class']
