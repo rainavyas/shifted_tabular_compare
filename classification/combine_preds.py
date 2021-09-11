@@ -29,6 +29,6 @@ if __name__ == '__main__':
     for seed in range(1, ensemble_size+1):
         preds1 = np.load(f'{args.dir1}/{seed}.npy')
         preds2 = np.load(f'{args.dir2}/{seed}.npy')
-        preds = np.concat((preds1, preds2), axis=0)
+        preds = np.concatenate((preds1, preds2), axis=0)
         np.save(f'{args.out_dir}/{seed}.npy', preds)
         print('Done seed', seed)
