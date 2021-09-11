@@ -137,3 +137,5 @@ if __name__ == '__main__':
         preds = np.asarray(get_predictions(dev_dl, model, device))
         np.save(f'{args.out_dir}/{seed}.npy', preds)
 
+        print('Done seed', seed)
+
