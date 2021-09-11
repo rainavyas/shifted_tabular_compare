@@ -97,7 +97,7 @@ if __name__ == '__main__':
     device = get_default_device()
 
     # Generate prediction file for each model
-    for seed in range(1, ensemble_size):
+    for seed in range(1, ensemble_size+1):
         # Set Seed
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
@@ -122,7 +122,7 @@ if __name__ == '__main__':
         X_dev = torch.FloatTensor(X_dev_np)
 
         lab_to_ind = get_lab_to_ind(df_train)
-        batch_size = 1024
+        batch_size = 256
 
         # get targets for dev
         y_dev = df['fact_cwsm_class']
