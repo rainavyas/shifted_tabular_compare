@@ -23,7 +23,9 @@ if __name__ == '__main__':
     
     ensemble_size = 10
 
-    labels = np.load(f'{args.dir1}/targets.npy')
+    labels1 = np.load(f'{args.dir1}/targets.npy')
+    labels2 = np.load(f'{args.dir2}/targets.npy')
+    labels = np.concatenate((labels1, labels2), axis=0)
     np.save(f'{args.out_dir}/targets.npy', labels)
 
     for seed in range(1, ensemble_size+1):
