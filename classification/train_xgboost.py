@@ -52,9 +52,9 @@ def main():
     params = {
         'base_score':0.5,
         'booster':'gbtree',
-        'colsample_bylevel':1,
-        'colsample_bynode':1,
-        'colsample_bytree':1,
+        'colsample_bylevel':0.75,
+        'colsample_bynode':0.75,
+        'colsample_bytree':0.75,
         'gamma':0,
         'learning_rate':0.5,
         'max_delta_step':0,
@@ -67,7 +67,7 @@ def main():
         'reg_lambda':0,
         'scale_pos_weight':1,
         'seed':SEED,
-        'subsample':1,
+        'subsample':0.75,
         'verbosity':1,
         'n_estimators':75 # number of epochs
     }
