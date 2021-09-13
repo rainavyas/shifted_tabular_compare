@@ -255,7 +255,7 @@ def main():
     model.to(device)
 
     # optimizer
-    lr = 0.0001
+    lr = 0.00001
     weight_decay = 0.9
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
@@ -263,7 +263,7 @@ def main():
     criterion = nn.GaussianNLLLoss().to(device)
 
     # Train
-    epochs = 30
+    epochs = 60
     for epoch in range(epochs):
 
         # train for one epoch
