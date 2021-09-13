@@ -23,7 +23,7 @@ python3.7 or above
 
 `pip install scikit-learn`
 
-### MLP
+### MLP / ResNet
 
 `pip install torch`
 
