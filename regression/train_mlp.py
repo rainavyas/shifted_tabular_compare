@@ -147,16 +147,6 @@ def get_default_device():
         print("No CUDA found")
         return torch.device('cpu')
 
-def get_lab_to_ind(data_df):
-    '''
-    Prepare a label to index map
-    '''
-    y_fact = set(list(data_df['fact_cwsm_class']))
-    lab_to_ind = {}
-    for i, lab in enumerate(y_fact):
-        lab_to_ind[lab] = i
-    return lab_to_ind
-
 def normalize(
     X: Dict[str, np.ndarray], normalization: str, seed: int, noise: float = 1e-3
 ) -> Dict[str, np.ndarray]:
@@ -240,19 +230,18 @@ def main():
     X_train = torch.FloatTensor(X_train_np)
     X_dev_in = torch.FloatTensor(X_dev_in_np)
 
-    lab_to_ind = get_lab_to_ind(df_train)
     batch_size = 1024
 
     # Train
-    y_train = np.asarray(df_train['fact_cwsm_class'])
-    y_train = torch.LongTensor(np.asarray([lab_to_ind[lab] for lab in y_train]))
+    y_train = np.asarray(df_train['fact_temperature'])
+    y_train = torch.LongTensor(y_train)
 
     train_ds = TensorDataset(X_train, y_train)
     train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
 
     # Dev in
-    y_dev_in = df_dev_in['fact_cwsm_class']
-    y_dev_in = torch.LongTensor(np.asarray([lab_to_ind[lab] for lab in y_dev_in]))
+    y_dev_in = df_dev_in['fact_temperature']
+    y_dev_in = torch.LongTensor(y_dev_in)
 
     dev_in_ds = TensorDataset(X_dev_in, y_dev_in)
     dev_in_dl = DataLoader(dev_in_ds, batch_size=batch_size, shuffle=True)
