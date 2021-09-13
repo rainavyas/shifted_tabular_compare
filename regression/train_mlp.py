@@ -45,7 +45,7 @@ def train(train_loader, model, criterion, optimizer, epoch, device, print_freq=5
 
         # Forward pass
         out = model(x)
-        means = out[:0]
+        means = out[:,0]
         variances = out[:,1]**2
         loss = criterion(means, target, variances)
 
