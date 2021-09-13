@@ -27,4 +27,8 @@ python3.7 or above
 
 `pip install torch`
 
+### CatBoost
+
+`pip install catboost`
+
 
